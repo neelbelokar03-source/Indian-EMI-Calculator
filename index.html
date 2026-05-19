@@ -5,111 +5,184 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EMI India Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif}
-body {background: #0a0a14; color: #fff; padding: 15px; min-height: 100vh}
+body {background: #0a0a14; color: #fff; padding: 15px; min-height: 100vh; background-image: radial-gradient(circle at 20% 20%, #1a1a3a 0%, #0a0a14 40%), radial-gradient(circle at 80% 80%, #0a0a14 0%, #0a0a14 40%)}
 .container {max-width: 500px; margin: 0 auto}
 h1 {text-align: center; font-size: 1.8rem; font-weight: 800; background: linear-gradient(90deg, #00d4ff, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent}
 p {text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 15px}
 .tabs {display: flex; gap: 8px; margin-bottom: 15px}
-.tab {flex: 1; padding: 12px 8px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; text-align: center; cursor: pointer; font-size: 0.75rem; color: #777}
+.tab {flex: 1; padding: 12px 8px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; text-align: center; cursor: pointer; font-size: 0.75rem; transition: 0.3s; color: #777}
 .tab.active {background: linear-gradient(90deg, #00d4ff, #7c3aed); border-color: transparent; color: #fff}
-.card {background: linear-gradient(135deg, #151525, #10101d); padding: 18px; border-radius: 20px; margin-bottom: 15px}
+.card {background: linear-gradient(135deg, #151525, #10101d); padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 60px rgba(0,0,0,0.5)}
 .card-title {font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600}
+.card-title i {color: #00d4ff}
 label {display: block; margin-bottom: 6px; color: #777; font-size: 0.85rem}
-input, select {width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 1rem}
+input, select {width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 1rem; transition: 0.3s}
+input:focus, select:focus {outline: none; border-color: #00d4ff; box-shadow: 0 0 20px rgba(0,212,255,0.15)}
 .tenure-box {display: flex; gap: 10px; align-items: flex-end}
 .tenure-box > div {flex: 1}
 .tenure-box select {width: 100px}
-.btn {width: 100%; padding: 16px; background: linear-gradient(90deg, #00d4ff, #7c3aed); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer}
+.btn {width: 100%; padding: 16px; background: linear-gradient(90deg, #00d4ff, #7c3aed); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.3s}
+.btn:hover {transform: translateY(-2px); box-shadow: 0 15px 40px rgba(0,212,255,0.35)}
+.btn-outline {background: transparent; border: 2px solid rgba(255,255,255,0.2)}
+.btn-outline:hover {border-color: #00d4ff}
 .result {display: none}
 .result.show {display: block}
-.result h3 {color: #00d4ff; font-size: 0.85rem}
+.result h3 {color: #00d4ff; font-size: 0.85rem; margin-bottom: 3px}
 .result .value {font-size: 2.3rem; font-weight: 800; background: linear-gradient(90deg, #00d4ff, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px}
 .grid {display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px}
-.grid .box {background: rgba(255,255,255,0.05); padding: 14px; border-radius: 14px; text-align: center}
+.grid .box {background: rgba(255,255,255,0.05); padding: 14px; border-radius: 14px; text-align: center; border: 1px solid rgba(255,255,255,0.08)}
 .grid .box label {font-size: 0.7rem; color: #666}
 .grid .box .val {font-size: 1.1rem; font-weight: 700; margin-top: 5px}
-.chart-box {height: 200px; margin: 15px 0}
+.chart-box {height: 200px; margin: 15px 0; background: rgba(255,255,255,0.03); border-radius: 15px; padding: 10px}
 .bank-list {max-height: 280px; overflow-y: auto}
-.bank-item {display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px}
+.bank-item {display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: 0.3s}
+.bank-item:hover {background: rgba(0,212,255,0.15); transform: translateX(5px)}
 .bank-item .name {font-weight: 600}
 .bank-item .rate {color: #10b981; font-weight: 700}
-.bank-item .best {background: #10b981; color: #000; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem}
+.bank-item .best {background: linear-gradient(90deg, #00d4ff, #10b981); color: #000; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700}
 .saved-list {max-height: 250px; overflow-y: auto}
-.saved-item {padding: 14px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center}
+.saved-item {padding: 14px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer}
+.saved-item:hover {background: rgba(255,255,255,0.1)}
 .saved-item .date {font-size: 0.7rem; color: #555}
-.saved-item .amount {color: #10b981; font-weight: 700}
+.saved-item .amount {font-size: 1.1rem; font-weight: 700; color: #10b981}
 .hidden {display: none}
 .floating-actions {display: flex; gap: 10px; margin-top: 15px}
-.floating-actions button {flex: 1; padding: 12px; background: transparent; border: 2px solid #333; border-radius: 12px; color: #fff}
+.floating-actions button {flex: 1; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px}
+@keyframes pulse {0%,100%{box-shadow: 0 10px 30px rgba(0,212,255,0.3)}50%{box-shadow: 0 10px 50px rgba(0,212,255,0.5)}}
+.btn {animation: pulse 3s infinite}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>EMI India Pro</h1>
 <p>Ultimate Loan Calculator</p>
+
 <div class="tabs">
 <div class="tab active" onclick="showTab('calc')">Calculator</div>
 <div class="tab" onclick="showTab('compare')">Banks</div>
 <div class="tab" onclick="showTab('saved')">Saved</div>
 </div>
+
 <div id="calc">
 <div class="card">
 <div class="card-title">Loan Details</div>
 <label>Loan Amount (Rs)</label>
-<input type="number" id="amount" value="5000000">
+<input type="number" id="amount" placeholder="Ex: 5000000" value="5000000">
+
 <div class="tenure-box">
-<div><label>Tenure</label><input type="number" id="tenure" value="20"></div>
-<div><label>Type</label>
-<select id="tenureType"><option value="years">Years</option><option value="months">Months</option></select>
+<div>
+<label>Tenure</label>
+<input type="number" id="tenure" placeholder="Enter" value="20">
+</div>
+<div>
+<label>Type</label>
+<select id="tenureType">
+<option value="years">Years</option>
+<option value="months">Months</option>
+</select>
 </div>
 </div>
+
 <label>Interest Rate (% p.a.)</label>
-<input type="number" id="rate" value="8.5" step="0.01">
+<input type="number" id="rate" placeholder="Ex: 8.5" value="8.5" step="0.01">
+
 <label>Monthly Income (Rs) - Optional</label>
 <input type="number" id="income" placeholder="Your salary">
+
 <button class="btn" onclick="calculate()">Calculate EMI</button>
 </div>
+
 <div class="result" id="result">
 <div class="card">
 <div class="card-title">Monthly EMI</div>
 <div class="value" id="emi">Rs 0</div>
+
 <div class="grid">
-<div class="box"><label>Total Interest</label><div class="val" style="color:#ef4444" id="interest">Rs 0</div></div>
-<div class="box"><label>Total Payment</label><div class="val" id="total">Rs 0</div></div>
-<div class="box"><label>Principal</label><div class="val" id="principal">Rs 0</div></div>
-<div class="box"><label>In-Hand</label><div class="val" style="color:#00d4ff" id="inHand">Rs 0</div></div>
+<div class="box">
+<label>Total Interest</label>
+<div class="val" style="color:#ef4444" id="interest">Rs 0</div>
 </div>
-<div class="chart-box"><canvas id="pieChart"></canvas></div>
+<div class="box">
+<label>Total Payment</label>
+<div class="val" id="total">Rs 0</div>
+</div>
+<div class="box">
+<label>Principal</label>
+<div class="val" id="principal">Rs 0</div>
+</div>
+<div class="box">
+<label>In-Hand</label>
+<div class="val" style="color:#00d4ff" id="inHand">Rs 0</div>
+</div>
+</div>
+
+<div class="chart-box">
+<canvas id="pieChart"></canvas>
+</div>
+
 <div class="grid">
-<div class="box"><label>Interest Ratio</label><div class="val" style="color:#a855f7" id="ratio">0%</div></div>
-<div class="box"><label>Monthly Interest</label><div class="val" style="color:#f59e0b" id="monthlyInt">Rs 0</div></div>
+<div class="box">
+<label>Interest Ratio</label>
+<div class="val" style="color:#a855f7" id="ratio">0%</div>
+</div>
+<div class="box">
+<label>Monthly Interest</label>
+<div class="val" style="color:#f59e0b" id="monthlyInt">Rs 0</div>
 </div>
 </div>
+</div>
+
 <div class="floating-actions">
-<button onclick="saveCalc()">Save</button>
-<button onclick="shareCalc()">Share</button>
+<button class="btn btn-outline" onclick="saveCalc()">Save</button>
+<button class="btn btn-outline" onclick="shareCalc()">Share</button>
 </div>
 </div>
 </div>
+
 <div id="compare" class="hidden">
-<div class="card"><div class="card-title">Bank Comparison</div>
+<div class="card">
+<div class="card-title">Bank Comparison</div>
 <div class="bank-list" id="bankList"></div>
 </div>
 </div>
+
 <div id="saved" class="hidden">
-<div class="card"><div class="card-title">Saved Calculations</div>
+<div class="card">
+<div class="card-title">Saved Calculations</div>
 <div class="saved-list" id="savedList"></div>
 </div>
 </div>
 </div>
+
 <script>
-const banks = [{name: 'SBI Home', rate: 8.40, best: true},{name: 'HDFC Bank', rate: 8.50, best: false},{name: 'ICICI Bank', rate: 8.60, best: false},{name: 'Axis Bank', rate: 8.55, best: false},{name: 'Bank of Baroda', rate: 8.45, best: false},{name: 'PNB', rate: 8.50, best: false},{name: 'Canara Bank', rate: 8.40, best: false},{name: 'IDFC First', rate: 8.60, best: false}];
-let currentEMI = 0, totalInterest = 0, totalPayment = 0, principal = 0, pieChart = null;
+const banks = [
+{name: 'SBI Home', rate: 8.40, best: true},
+{name: 'HDFC Bank', rate: 8.50, best: false},
+{name: 'ICICI Bank', rate: 8.60, best: false},
+{name: 'Axis Bank', rate: 8.55, best: false},
+{name: 'Bank of Baroda', rate: 8.45, best: false},
+{name: 'PNB', rate: 8.50, best: false},
+{name: 'Canara Bank', rate: 8.40, best: false},
+{name: 'IDFC First', rate: 8.60, best: false},
+{name: 'Kotak Bank', rate: 8.55, best: false},
+{name: 'IndusInd Bank', rate: 8.65, best: false}
+];
+
+let currentEMI = 0;
+let totalInterest = 0;
+let totalPayment = 0;
+let principal = 0;
+let pieChart = null;
 let calculations = JSON.parse(localStorage.getItem('emiCalcs') || '[]');
-function format(num) {return 'Rs ' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');}
+
+function format(num) {
+return 'Rs ' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function calculate() {
 principal = parseFloat(document.getElementById('amount').value);
 let rate = parseFloat(document.getElementById('rate').value) / 100 / 12;
@@ -117,13 +190,19 @@ let tenureType = document.getElementById('tenureType').value;
 let n = parseFloat(document.getElementById('tenure').value);
 if (tenureType === 'years') n = n * 12;
 let income = parseFloat(document.getElementById('income').value) || 0;
-if (!principal || !rate || !n) {alert('Please fill all required fields');return;}
+
+if (!principal || !rate || !n) {
+alert('Please fill all required fields');
+return;
+}
+
 currentEMI = principal * rate * Math.pow(1 + rate, n) / (Math.pow(1 + rate, n) - 1);
 totalPayment = currentEMI * n;
 totalInterest = totalPayment - principal;
 let inHand = income > 0 ? income - currentEMI : 0;
 let monthlyInt = principal * rate;
 let ratio = (totalInterest / principal) * 100;
+
 document.getElementById('emi').innerText = format(currentEMI);
 document.getElementById('interest').innerText = format(totalInterest);
 document.getElementById('total').innerText = format(totalPayment);
@@ -132,9 +211,25 @@ document.getElementById('inHand').innerText = income > 0 ? format(inHand) : 'Rs 
 document.getElementById('ratio').innerText = ratio.toFixed(1) + '%';
 document.getElementById('monthlyInt').innerText = format(monthlyInt);
 document.getElementById('result').classList.add('show');
+
 if (pieChart) pieChart.destroy();
-pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {type: 'doughnut', data: {labels: ['Principal', 'Interest'], datasets: [{data: [principal, totalInterest], backgroundColor: ['#00d4ff', '#ef4444'], borderWidth: 0}]}, options: {responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: {legend: {position: 'bottom', labels: {color: '#fff', padding: 15}}}}});
+pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {
+type: 'doughnut',
+data: {
+labels: ['Principal', 'Interest'],
+datasets: [{data: [principal, totalInterest], backgroundColor: ['#00d4ff', '#ef4444'], borderWidth: 0}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+cutout: '65%',
+plugins: {
+legend: {position: 'bottom', labels: {color: '#fff', padding: 15}}
 }
+}
+});
+}
+
 function showTab(tab) {
 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 document.querySelectorAll('#calc, #compare, #saved').forEach(c => c.classList.add('hidden'));
@@ -145,6 +240,7 @@ document.getElementById(tab).classList.remove('hidden');
 if(tab === 'compare') showBanks();
 if(tab === 'saved') showSaved();
 }
+
 function showBanks() {
 const list = document.getElementById('bankList');
 list.innerHTML = '';
@@ -152,16 +248,30 @@ banks.forEach(bank => {
 let div = document.createElement('div');
 div.className = 'bank-item';
 div.innerHTML = '<span class="name">' + bank.name + '</span><span class="rate">' + bank.rate + '%' + (bank.best ? ' <span class="best">BEST</span>' : '') + '</span>';
-div.onclick = function() {document.getElementById('rate').value = bank.rate; calculate(); showTab('calc');};
+div.onclick = function() {
+document.getElementById('rate').value = bank.rate;
+calculate();
+showTab('calc');
+};
 list.appendChild(div);
 });
 }
+
 function saveCalc() {
-let calc = {date: new Date().toLocaleDateString(), amount: document.getElementById('amount').value, rate: document.getElementById('rate').value, tenure: document.getElementById('tenure').value, tenureType: document.getElementById('tenureType').value, emi: currentEMI};
+let calc = {
+date: new Date().toLocaleDateString(),
+amount: document.getElementById('amount').value,
+rate: document.getElementById('rate').value,
+tenure: document.getElementById('tenure').value,
+tenureType: document.getElementById('tenureType').value,
+emi: currentEMI
+};
 calculations.unshift(calc);
 localStorage.setItem('emiCalcs', JSON.stringify(calculations));
-alert('Calculation saved!'); showTab('saved');
+alert('Calculation saved!');
+showTab('saved');
 }
+
 function showSaved() {
 const list = document.getElementById('savedList');
 list.innerHTML = '';
@@ -172,8 +282,9 @@ div.innerHTML = '<div><div class="date">' + calc.date + '</div><div>Rs ' + calc.
 list.appendChild(div);
 });
 }
+
 function shareCalc() {
-let text = 'EMI Results:\n\nMonthly EMI: ' + document.getElementById('emi').innerText + '\nTotal Interest: ' + document.getElementById('interest').innerText + '\nTotal Payment: ' + document.getElementById('total').innerText;
+let text = 'EMI Results:\n\nMonthly EMI: ' + document.getElementById('emi').innerText + '\nTotal Interest: ' + document.getElementById('interest').innerText + '\nTotal Payment: ' + document.getElementById('total').innerText + '\n\nCalculated via EMI India Pro';
 window.open('https://wa.me/?text=' + encodeURIComponent(text));
 }
 </script>
